@@ -25,4 +25,8 @@ def show_predict_page():
         X = ctv.transform([text])
 
         person = model.predict(X)
-        st.subheader(f"Credo che a scrivere sia stato {le.inverse_transform(person)[0]}")
+        probs = max(model.predict_proba(X)[0])*100
+        formatted_probs = "{:.0f}".format(probs)
+        st.subheader(f"Sono sicuro al al {formatted_probs}% che a scrivere sia stato {le.inverse_transform(person)[0]}")
+        st.write("""##### Livello di confidenza:""")
+        st.progress(int(formatted_probs))
