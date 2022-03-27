@@ -1,7 +1,5 @@
 import streamlit as st
 import pickle
-import numpy as np
-
 
 def load_model():
     with open('saved_steps.pkl', 'rb') as file:
@@ -9,51 +7,22 @@ def load_model():
     return data
 
 data = load_model()
+model = data["model"]
+le = data["le"]
+ctv = data["ctv"]
 
-regressor = data["model"]
-le_country = data["le_country"]
-le_education = data["le_education"]
 
 def show_predict_page():
-    st.title("Software Developer Salary Prediction")
+    st.title("AMICI di lorenzo valitutto COME PRIMA")
 
-    st.write("""### We need some information to predict the salary""")
+    st.write("""### Scrivi un testo e indovinerò quale amico come prima sei""")
+    st.write("""##### Tra Ciro, Ambrogio, Giuseppe, Martin, Lorenzo""")
 
-    countries = (
-        "United States",
-        "India",
-        "United Kingdom",
-        "Germany",
-        "Canada",
-        "Brazil",
-        "France",
-        "Spain",
-        "Australia",
-        "Netherlands",
-        "Poland",
-        "Italy",
-        "Russian Federation",
-        "Sweden",
-    )
+    text = st.text_area("Testo")
 
-    education = (
-        "Less than a Bachelors",
-        "Bachelor’s degree",
-        "Master’s degree",
-        "Post grad",
-    )
-
-    country = st.selectbox("Country", countries)
-    education = st.selectbox("Education Level", education)
-
-    expericence = st.slider("Years of Experience", 0, 50, 3)
-
-    ok = st.button("Calculate Salary")
+    ok = st.button("Indovina")
     if ok:
-        X = np.array([[country, education, expericence ]])
-        X[:, 0] = le_country.transform(X[:,0])
-        X[:, 1] = le_education.transform(X[:,1])
-        X = X.astype(float)
+        X = ctv.transform([text])
 
-        salary = regressor.predict(X)
-        st.subheader(f"The estimated salary is ${salary[0]:.2f}")
+        person = model.predict(X)
+        st.subheader(f"Credo che a scrivere sia stato {le.inverse_transform(person)[0]}")
